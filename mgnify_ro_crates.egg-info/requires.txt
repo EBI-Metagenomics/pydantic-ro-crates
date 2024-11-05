@@ -1,0 +1,4 @@
+tqdm
+requests
+beautifulsoup4
+arcp
