@@ -1,2 +1,0 @@
-[console_scripts]
-motus_ro_crates_preparer = motus_ro_crates_preparer:main

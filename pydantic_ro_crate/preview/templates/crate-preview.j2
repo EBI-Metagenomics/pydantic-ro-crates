@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{{ description }}">
+    <title>RO-Crate Preview</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css" integrity="sha384-X38yfunGUhNzHpBaEBsWLO+A0HDYOQi8ufWDkZ0k9e0eXz/tH3II7uKZ9msv++Ls" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    {% include "style.j2" %}
+</head>
+<body>
+
+<div id="layout" class="content pure-g">
+    <div id="nav" class="pure-u">
+        <a href="#" id="menuLink" class="nav-menu-button">Menu</a>
+
+        <div class="nav-inner">
+            <div class="pure-menu">
+                <ul class="pure-menu-list">
+                    <li class="pure-menu-heading">Pages</li>
+                    <li class="pure-menu-item"><a href="#" onclick="loadMainPreviewPage();" class="pure-menu-link">Crate preview</a></li>
+                    {% for preview_page in pages %}
+                        <li class="pure-menu-item"><a href="#" onclick="loadOtherPage('{{ preview_page.id_ }}')" class="pure-menu-link">{{ preview_page.name }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div id="main" class="pure-u-1">
+        <div class="email-content">
+
+            <div id="full-metadata">
+                {% for entity in entities %}
+                    <div class="email-content-header pure-g">
+                        <div class="pure-u-1-2">
+                            <h1 class="email-content-title" id="{{ entity.id_ }}">{{ entity.id_ }}</h1>
+                            <p class="email-content-subtitle">
+                               {{ entity.name|d("") }}
+                            </p>
+                            <p class="email-content-subtitle">
+                               {{ entity.description|d("") }}
+                            </p>
+                            <div class="email-content-body">
+                                <table class="pure-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Attribute</th>
+                                            <th>Value</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for k, v in entity.dict().items() %}
+                                            {% if k not in ["name", "@id", "description"] %}
+                                                <tr><td>{{ k }}</td><td>{{ v }}</td></tr>
+
+                                            {% endif %}
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <div id="other-page" style="width: 80vw; height: 100vh">
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Script to make the Menu link work -->
+<!-- Just stripped down version of the js/ui.js script for the side-menu layout -->
+<script>
+    function getElements() {
+        return {
+            menu: document.getElementById('nav'),
+            menuLink: document.getElementById('menuLink')
+        };
+    }
+
+    function toggleClass(element, className) {
+        var classes = element.className.split(/\s+/);
+        var length = classes.length;
+        var i = 0;
+
+        for (; i < length; i++) {
+            if (classes[i] === className) {
+                classes.splice(i, 1);
+                break;
+            }
+        }
+        // The className is not found
+        if (length === classes.length) {
+            classes.push(className);
+        }
+
+        element.className = classes.join(' ');
+    }
+
+    function toggleMenu() {
+        var active = 'active';
+        var elements = getElements();
+
+        toggleClass(elements.menu, active);
+    }
+
+    function handleEvent(e) {
+        var elements = getElements();
+
+        if (e.target.id === elements.menuLink.id) {
+            toggleMenu();
+            e.preventDefault();
+        } else if (elements.menu.className.indexOf('active') !== -1) {
+            toggleMenu();
+        }
+    }
+
+    function loadExternalScript(src) {
+      return new Promise((resolve, reject) => {
+        const script = document.createElement("script");
+        script.src = src;
+        script.onload = () => {
+          resolve();
+        };
+        script.onerror = () => {
+          reject(new Error(`Script load error for ${src}`));
+        };
+        document.body.appendChild(script);
+      });
+    }
+
+    // Function to execute inline script
+    function executeInlineScript(scriptContent) {
+      const script = document.createElement("script");
+      script.textContent = scriptContent;
+      document.body.appendChild(script);
+      document.body.removeChild(script); // Clean up
+    }
+
+    async function loadOtherPage(relative_url) {
+        const response = await fetch(relative_url);
+        const html = await response.text();
+
+        const otherPage = document.getElementById('other-page');
+        otherPage.innerHTML = html;
+        otherPage.style.display = "block";
+
+        document.getElementById('full-metadata').style.display = "none";
+
+        const scripts = otherPage.querySelectorAll("script");
+         for (const oldScript of scripts) {
+          if (oldScript.src) { // External script
+            await loadExternalScript(oldScript.src);
+          }
+        }
+
+        // Then, execute inline scripts in order
+        for (const oldScript of scripts) {
+          if (!oldScript.src) { // Inline script
+            executeInlineScript(oldScript.textContent);
+          }
+        }
+    }
+
+    function loadMainPreviewPage() {
+        document.getElementById('other-page').style.display = "none";
+        document.getElementById('full-metadata').style.display = "block";
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('click', handleEvent);
+    });
+</script>
+</body>
+</html>

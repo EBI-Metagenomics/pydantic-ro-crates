@@ -1,25 +1,24 @@
-# RO Crates Preparer
+# Pydantic-RO-Crate
 
 ## Overview
 
-The RO Crates Preparer is a Python-based tool designed to prepare Research Object (RO) crates for various pipelines. It supports generating RO-Crate metadata, extracting files from subdirectories, and creating HTML previews.
+Pydantic-RO-Crate is a Python library for preparing RO-Crates using Pydantic types.
+It supports the building of json-ld RO-Crate metadata graphs, as well as preparing rich HTML previews of them.
 
 ## Features
+- Build crates pythonically, using Pydantic types for all schema.org types
+- Include ("localise") certain files _into_ the crate
+- Package crates as .zip
+- Prepare HTML preview in the crate, as human-readable accompianment to the machine-readable RO-Crate metadata JSON-ld
+- Where localised files are previewable (e.g. HTML files from reporting tools), these are linked into a "website in a crate"
+- Plugins (`contrib`s) for extra functionality, like making HTML maps
 
-- Generates RO-Crate metadata for pipeline outputs.
-- Supports multiple RO crates preparation from a list of directories.
-- Extracts files from subdirectories and prepares them for inclusion in the RO crate.
-- Creates HTML previews and zips the output folder.
+## Development
 
-## Requirements
+### Requirements
+`poetry`
 
-- Python 3.6+
-- `tqdm==4.64.1`
-- `requests==2.27.1`
-- `beautifulsoup4==4.12.3`
-- `arcp==0.2.1`
-
-## Installation
+### Installation
 
 1. Clone the repository:
     ```sh
@@ -27,25 +26,64 @@ The RO Crates Preparer is a Python-based tool designed to prepare Research Objec
     cd <repository_directory>
     ```
 
-2. Install the required Python packages:
+2. Install with poetry:
     ```sh
-    pip install -r requirements.txt
+    poetry install
     ```
 
 ## Usage
 
-To prepare an RO crate, run the following command:
+```python
+from pydantic2_schemaorg.Dataset import Dataset
+from pydantic2_schemaorg.GeoCoordinates import GeoCoordinates
 
-```sh
-python ro_crates_preparer.py <original_crate_zip_url> <destination_folder> [--extract_multiple]
+from pydantic_ro_crate.crate.ro_crate import ROCrate
+from pydantic_ro_crate.graph.models import ROOT_PATH, LocalalisableFile
 
+roc = ROCrate()
+
+# define a location metadata - we can use GeoCoordinates type from schema.prg
+location = GeoCoordinates(
+  longitude=14.25,
+  latitude=40.808333,
+  name="Sample location",
+  id_=f"#location-ERS2154049"
+)
+
+# add the location entity to the crate:
+roc += location
+
+# maybe we need to add a non-standard property to a standard type like the root Dataset
+# just inherit the Pydantic type, and add another field!
+class DataSetWithLocation(Dataset):
+  location: GeoCoordinates
+
+# now make the root dataset - this is core to the RO-Crate spec
+dataset = DataSetWithLocation(
+  id_=ROOT_PATH,
+  name="Sample ERS2154049 - Mediterranean surface marine water",
+  description="Mediterranean surface marine water, part of study of protist temporal diversity",
+  identifier="ERS2154049",
+  location=location,
+)
+# add root dataset to the crate, too
+roc += dataset
+
+# Use the mapping plugin to make a nice rendered map of the locations
+from pydantic_ro_crate.contrib.mapping.render_map import render_leaflet_map
+from pathlib import Path
+render_leaflet_map([location], output=Path("map.html"), title=dataset.name)
+
+# add the map html file as a "localisable" file; i.e. include it in the packaged crate AND the crate metadata graph
+roc.add_localised_file(
+   LocalalisableFile(
+       id_="map.html",
+       source_on_host=Path("map.html"),
+       name="Sample map",
+       description="Map of sample coordinates"
+   )
+)
+
+# package the crate as a zip: the metadata json, preview html, and the included map html
+roc.zip(Path("my-crate.zip"))
 ```
-
-- `<original_crate_zip_url>`: The URL of the original RO crate zip file.
-- `<destination_folder>`: The path to the destination folder where the RO crate will be prepared.
-- --extract_multiple: Optional flag to extract files from multiple subdirectories.
-
-### Example
-python ro_crates_preparer.py https://example.com/original_crate.zip /path/to/destination --extract_multiple
-```sh
-
