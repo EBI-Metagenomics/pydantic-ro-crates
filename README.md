@@ -5,6 +5,8 @@
 Pydantic-RO-Crate is a Python library for preparing RO-Crates using Pydantic types.
 It supports the building of json-ld RO-Crate metadata graphs, as well as preparing rich HTML previews of them.
 
+![Composite screenshots of subset of code from this README example and the rendered html previews](media/pydantic-ro-crate.png "Composite diagram and screenshot")
+
 ## Features
 - Build crates pythonically, using Pydantic types for all schema.org types
 - Include ("localise") certain files _into_ the crate
@@ -42,7 +44,7 @@ from pydantic_ro_crate.graph.models import ROOT_PATH, LocalalisableFile
 
 roc = ROCrate()
 
-# define a location metadata - we can use GeoCoordinates type from schema.prg
+# define a location metadata - we can use GeoCoordinates type from schema.org
 location = GeoCoordinates(
   longitude=14.25,
   latitude=40.808333,
