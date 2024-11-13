@@ -1,4 +1,4 @@
-from email.policy import default
+from enum import Enum
 from pathlib import Path
 from typing import Any, List, Optional, Union
 
@@ -30,23 +30,42 @@ ABOUT = "about"
 CONFORMS_TO = "conformsTo"
 ROOT_PATH = "./"
 
-ro_crate_context = "https://w3id.org/ro/crate/1.1/context"
-ro_crate_profile = "https://w3id.org/ro/crate/1.1"
-ro_crate_profile_versionless = "https://w3id.org/ro/crate/"
+
+class RO_CRATE_VERSIONS(str, Enum):
+    ONE_ZERO = "1.0"
+    ONE_ONE = "1.1"
+    LATEST = ONE_ONE
+
+
+RO_CRATE_CONTEXTS = {
+    RO_CRATE_VERSIONS.ONE_ZERO: "https://w3id.org/ro/crate/1.0/context",
+    RO_CRATE_VERSIONS.ONE_ONE: "https://w3id.org/ro/crate/1.1/context",
+}
+
+RO_CRATE_PROFILE_BASE = "https://w3id.org/ro/crate/"
+
+RO_CRATE_PROFILES = {
+    RO_CRATE_VERSIONS.ONE_ZERO: RO_CRATE_PROFILE_BASE + RO_CRATE_VERSIONS.ONE_ZERO,
+    RO_CRATE_VERSIONS.ONE_ONE: RO_CRATE_PROFILE_BASE + RO_CRATE_VERSIONS.ONE_ONE,
+}
 
 RO_CRATE_METADATA_JSON = "ro-crate-metadata.json"
 
 
 class ROCrateMetadata(CreativeWork):
     id_: Any = Field(default=RO_CRATE_METADATA_JSON, alias="@id", frozen=True)
-    conforms_to_: Any = Field(default=ro_crate_profile, alias=CONFORMS_TO)
+    conforms_to_: Any = Field(
+        default=RO_CRATE_PROFILES[RO_CRATE_VERSIONS.LATEST], alias=CONFORMS_TO
+    )
     about: Optional[Union[List[Union["Thing", str]], "Thing", str]] = Field(
-        default=ROOT_PATH, alias=ABOUT, const=True
+        default=ROOT_PATH, alias=ABOUT
     )
 
 
 class ROCrateModel(SchemaOrgBase):
-    context_: Optional[Any] = Field(default=ro_crate_context, alias="@context")
+    context_: Optional[Any] = Field(
+        default=RO_CRATE_CONTEXTS[RO_CRATE_VERSIONS.LATEST], alias="@context"
+    )
 
     @staticmethod
     def maybe_get_crate_metadata_entity(graph: List[Any]) -> Optional[ROCrateMetadata]:
@@ -73,7 +92,7 @@ class ROCrateModel(SchemaOrgBase):
         root = None
         for entity in self.graph_:
             if entity.conforms_to_ and str(entity.conforms_to_).startswith(
-                ro_crate_profile_versionless
+                RO_CRATE_PROFILE_BASE
             ):
                 root = entity.about
                 break

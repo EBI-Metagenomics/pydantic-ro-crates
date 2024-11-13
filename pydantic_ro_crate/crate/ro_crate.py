@@ -1,3 +1,4 @@
+import importlib
 import json
 import logging
 import tempfile
@@ -5,11 +6,30 @@ from pathlib import Path
 from shutil import copy, make_archive
 from typing import Any, List
 
-from ..graph.models import RO_CRATE_METADATA_JSON, LocalalisableFile, ROCrateModel
+from pydantic import create_model
+from pydantic2_schemaorg import __all__ as AVAILABLE_SCHEMAORG_TYPES
+from pydantic2_schemaorg.Thing import Thing
+
+from ..graph.models import (
+    CONTEXT,
+    GRAPH,
+    ID,
+    RO_CRATE_CONTEXTS,
+    RO_CRATE_METADATA_JSON,
+    ROOT_PATH,
+    TYPE,
+    LocalalisableFile,
+    ROCrateMetadata,
+    ROCrateModel,
+)
 
 __all__ = ["ROCrate"]
 
 from ..preview.render import render_preview_html
+
+
+class ROCrateParseError(ValueError):
+    pass
 
 
 class ROCrate:
@@ -79,3 +99,84 @@ class ROCrate:
             logging.info(f"Zipping crate to {crate_zip_basename}")
             zipfile = make_archive(crate_zip_basename, "zip", tmpdir)
         return Path(zipfile).resolve()
+
+    @classmethod
+    def from_json(
+        cls, crate_json: dict[str, Any], strict_schemaorg: bool = False
+    ) -> "ROCrate":
+        incoming_context = crate_json.get(CONTEXT)
+        if not incoming_context or not incoming_context in RO_CRATE_CONTEXTS.values():
+            raise ROCrateParseError(f"{CONTEXT} of {incoming_context} not supported")
+
+        incoming_graph = crate_json.get(GRAPH)
+        if not incoming_graph:
+            raise ROCrateParseError(f"{GRAPH} not found in JSON")
+        if type(incoming_graph) is not list:
+            raise ROCrateParseError(f"{GRAPH} is not a list")
+        if len(incoming_graph) < 1:
+            raise ROCrateParseError(f"{GRAPH} is empty")
+
+        try:
+            root_dataset = next(
+                item for item in incoming_graph if item.get(ID) == ROOT_PATH
+            )
+        except StopIteration:
+            raise ROCrateParseError(f"{ROOT_PATH} not found in graph")
+        else:
+            logging.info(f"Root dataset found {root_dataset}")
+
+        try:
+            crate_metadata = next(
+                item
+                for item in incoming_graph
+                if item.get(ID) == RO_CRATE_METADATA_JSON
+            )
+        except StopIteration:
+            raise ROCrateParseError(f"{RO_CRATE_METADATA_JSON} not found in {GRAPH}")
+        else:
+            logging.info(f"Crate metadata found {crate_metadata}")
+
+        crate_metadata_obj = ROCrateMetadata(**crate_metadata)
+        # May fail if crate metadata json contains unexpected keys
+
+        instance = cls()
+        instance.crate = ROCrateModel(
+            context_=incoming_context, graph_=[crate_metadata_obj]
+        )
+
+        for item in incoming_graph:
+            logging.info(f"Processing graph item {item.get(ID)}")
+            if item.get(ID) == RO_CRATE_METADATA_JSON:
+                continue
+
+            incoming_item_type = item.get(TYPE)
+            if incoming_item_type is None:
+                raise ROCrateParseError(f"{TYPE} not found in {item}")
+
+            logging.debug(
+                f"Incoming graph has item of claimed type {incoming_item_type}."
+            )
+            if incoming_item_type in AVAILABLE_SCHEMAORG_TYPES:
+                logging.debug(f"Found {incoming_item_type} in schema.org")
+                schemaorg_module = importlib.import_module(
+                    f"pydantic2_schemaorg.{incoming_item_type}"
+                )
+                item_obj = getattr(schemaorg_module, incoming_item_type)(**item)
+                instance += item_obj
+                logging.info(f"Added {item.get(ID)} to graph")
+
+            elif strict_schemaorg:
+                raise ROCrateParseError(
+                    f"{incoming_item_type} is not a schema.org type"
+                )
+
+            else:
+                dynamic_model = create_model(incoming_item_type, __base__=Thing)
+                logging.debug(
+                    f"Created arbitrary Thing-based model for {incoming_item_type}"
+                )
+                item_obj = dynamic_model(**item)
+                instance += item_obj
+                logging.info(f"Added {item.get(ID)} to graph")
+
+        return instance
