@@ -19,7 +19,7 @@ jobs:
         uses: abatilo/actions-poetry@v3
         with:
           poetry-version: ${{ matrix.poetry-version }}
-      - uses: pre-commit/action@v3
+      - uses: pre-commit/action@v3.0.1
       - name: Install package
         run: poetry install --with=dev
       - name: Run tests
