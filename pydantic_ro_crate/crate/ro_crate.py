@@ -33,11 +33,9 @@ class ROCrateParseError(ValueError):
 
 
 class ROCrate:
-    crate: ROCrateModel
-    files: List[LocalalisableFile] = []
-
-    def __init__(self, **kwargs):
-        self.crate = ROCrateModel(**kwargs)
+    def __init__(self, files: List[LocalalisableFile] = None, **kwargs):
+        self.crate: ROCrateModel = ROCrateModel(**kwargs)
+        self.files: List[LocalalisableFile] = files or []
 
     def add_localised_file(self, localisable_file: LocalalisableFile):
         self.files.append(localisable_file)
