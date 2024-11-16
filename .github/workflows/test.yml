@@ -1,0 +1,26 @@
+---
+name: test
+on: [push, pull_request]  # yamllint disable-line rule:truthy
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.12", "3.13"]
+        poetry-version: ["latest"]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Setup poetry
+        uses: abatilo/actions-poetry@v3
+        with:
+          poetry-version: ${{ matrix.poetry-version }}
+      - uses: pre-commit/action@v3
+      - name: Install package
+        run: poetry install --with=dev
+      - name: Run tests
+        run: poetry run pytest
