@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pydantic-ro-crates"
-version = "0.2.0"
+version = "0.2.1"
 description = "Create Research Object Crates (RO-Crates) using Pydantic types"
 authors = ["Sandy Rogers <sandyr@ebi.ac.uk>", "Mahfouz Shehu <mahfouz@ebi.ac.uk>"]
 license = "Apache License 2.0"
@@ -13,7 +13,7 @@ requests = "^2.32.3"
 beautifulsoup4 = "^4.12.3"
 arcp = "^0.2.1"
 pydantic = "^2.9.2"
-pydantic2-schemaorg = "^0.2.0"
+pydantic2-schemaorg = "^0.3.0"
 jinja2 = "^3.1.4"
 
 [tool.poetry.group.dev.dependencies]
