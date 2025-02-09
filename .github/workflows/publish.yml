@@ -28,7 +28,7 @@ jobs:
       - name: Setup poetry
         uses: abatilo/actions-poetry@v3
         with:
-          poetry-version: "3.13"
+          poetry-version: latest
 
       - name: Install dependencies
         run: poetry install --no-root
