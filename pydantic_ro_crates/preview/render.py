@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Optional
 from jinja2 import Environment, FileSystemLoader
 
 if TYPE_CHECKING:
-    from pydantic_ro_crate.crate.ro_crate import ROCrate
+    from pydantic_ro_crates.crate.ro_crate import ROCrate
 
 template_dir = Path(__file__).parent / "templates"
 env = Environment(loader=FileSystemLoader(template_dir))

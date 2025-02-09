@@ -1,4 +1,4 @@
-from pydantic_ro_crate.crate.ro_crate import ROCrate
+from pydantic_ro_crates.crate.ro_crate import ROCrate
 
 
 def test_parse_from_json():

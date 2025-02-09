@@ -5,8 +5,8 @@ from pathlib import Path
 from pydantic2_schemaorg.CreativeWork import CreativeWork
 from pydantic2_schemaorg.Dataset import Dataset
 
-from pydantic_ro_crate.crate.ro_crate import ROCrate
-from pydantic_ro_crate.graph.models import GRAPH, ID, LocalalisableFile
+from pydantic_ro_crates.crate.ro_crate import ROCrate
+from pydantic_ro_crates.graph.models import GRAPH, ID, LocalalisableFile
 
 
 def test_minimal_crate_construction():

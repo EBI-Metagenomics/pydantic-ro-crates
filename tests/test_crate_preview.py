@@ -6,8 +6,8 @@ from pydantic2_schemaorg.CreativeWork import CreativeWork
 from pydantic2_schemaorg.Dataset import Dataset
 from pydantic2_schemaorg.Organization import Organization
 
-from pydantic_ro_crate.crate.ro_crate import ROCrate
-from pydantic_ro_crate.preview.render import render_preview_html
+from pydantic_ro_crates.crate.ro_crate import ROCrate
+from pydantic_ro_crates.preview.render import render_preview_html
 
 
 def test_crate_preview():

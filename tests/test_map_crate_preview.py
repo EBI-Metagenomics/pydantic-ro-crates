@@ -4,9 +4,9 @@ from pathlib import Path
 from pydantic2_schemaorg.Dataset import Dataset
 from pydantic2_schemaorg.GeoCoordinates import GeoCoordinates
 
-from pydantic_ro_crate.contrib.mapping.render_map import render_leaflet_map
-from pydantic_ro_crate.crate.ro_crate import ROCrate
-from pydantic_ro_crate.graph.models import ROOT_PATH, LocalalisableFile
+from pydantic_ro_crates.contrib.mapping.render_map import render_leaflet_map
+from pydantic_ro_crates.crate.ro_crate import ROCrate
+from pydantic_ro_crates.graph.models import ROOT_PATH, LocalalisableFile
 
 
 def test_map_crate_preview():

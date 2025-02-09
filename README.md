@@ -26,8 +26,8 @@ pip install pydantic-ro-crates
 from pydantic2_schemaorg.Dataset import Dataset
 from pydantic2_schemaorg.GeoCoordinates import GeoCoordinates
 
-from pydantic_ro_crate.crate.ro_crate import ROCrate
-from pydantic_ro_crate.graph.models import ROOT_PATH, LocalalisableFile
+from pydantic_ro_crates.crate.ro_crate import ROCrate
+from pydantic_ro_crates.graph.models import ROOT_PATH, LocalalisableFile
 
 roc = ROCrate()
 
@@ -59,7 +59,7 @@ dataset = DataSetWithLocation(
 roc += dataset
 
 # Use the mapping plugin to make a nice rendered map of the locations
-from pydantic_ro_crate.contrib.mapping.render_map import render_leaflet_map
+from pydantic_ro_crates.contrib.mapping.render_map import render_leaflet_map
 from pathlib import Path
 render_leaflet_map([location], output=Path("map.html"), title=dataset.name)
 
@@ -104,3 +104,8 @@ Issues and pull-requests are very welcome.
     ```shell
     poetry install
     ```
+
+3. Run tests:
+   ```shell
+   poetry run pytest
+   ```
