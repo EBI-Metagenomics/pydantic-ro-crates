@@ -24,8 +24,8 @@ It supports the building of json-ld RO-Crate metadata graphs, as well as prepari
 
 1. Clone the repository:
     ```sh
-    git clone <repository_url>
-    cd <repository_directory>
+    git clone https://github.com/EBI-Metagenomics/pydantic-ro-crates.git
+    cd pydantic-ro-crates
     ```
 
 2. Install with poetry:

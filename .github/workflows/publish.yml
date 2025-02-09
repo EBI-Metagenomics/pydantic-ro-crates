@@ -1,0 +1,40 @@
+---
+name: Publish to PyPI
+
+on:   # yamllint disable-line rule:truthy
+  workflow_run:
+    workflows: [test]
+    types:
+      - completed
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi-release
+      url: https://pypi.org/p/pydantic-ro-crates
+    permissions:
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Setup poetry
+        uses: abatilo/actions-poetry@v3
+        with:
+          poetry-version: "3.13"
+
+      - name: Install dependencies
+        run: poetry install --no-root
+
+      - name: Build package
+        run: poetry build
+
+      - name: Publish package distributions to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
