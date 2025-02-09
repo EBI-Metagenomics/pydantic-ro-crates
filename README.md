@@ -1,8 +1,8 @@
-# Pydantic-RO-Crate
+# Pydantic-RO-Crates
 
 ## Overview
 
-Pydantic-RO-Crate is a Python library for preparing RO-Crates using Pydantic types.
+Pydantic-RO-Crates is a Python library for preparing RO-Crates using Pydantic types.
 It supports the building of json-ld RO-Crate metadata graphs, as well as preparing rich HTML previews of them.
 
 ![Composite screenshots of subset of code from this README example and the rendered html previews](media/pydantic-ro-crate.png "Composite diagram and screenshot")
@@ -15,23 +15,10 @@ It supports the building of json-ld RO-Crate metadata graphs, as well as prepari
 - Where localised files are previewable (e.g. HTML files from reporting tools), these are linked into a "website in a crate"
 - Plugins (`contrib`s) for extra functionality, like making HTML maps
 
-## Development
-
-### Requirements
-`poetry`
-
-### Installation
-
-1. Clone the repository:
-    ```sh
-    git clone https://github.com/EBI-Metagenomics/pydantic-ro-crates.git
-    cd pydantic-ro-crates
-    ```
-
-2. Install with poetry:
-    ```sh
-    poetry install
-    ```
+## Installation
+```shell
+pip install pydantic-ro-crates
+```
 
 ## Usage
 
@@ -89,3 +76,31 @@ roc.add_localised_file(
 # package the crate as a zip: the metadata json, preview html, and the included map html
 roc.zip(Path("my-crate.zip"))
 ```
+
+> [!NOTE]
+> **Citing this work**
+> If you find this package useful for academic work and wish to cite it, it is described in a BioHackrXiv preprint:
+>
+> Rogers A, Bäuerle F, Beracochea M, et al. Enhancing multi-omic analyses through a federated microbiome analysis service. BioHackrXiv; 2025. DOI: 10.37044/osf.io/3x274.
+
+---
+
+## Development
+
+Issues and pull-requests are very welcome.
+
+### Development requirements
+`poetry`
+
+### Development installation
+
+1. Clone the repository:
+    ```shell
+    git clone https://github.com/EBI-Metagenomics/pydantic-ro-crates.git
+    cd pydantic-ro-crates
+    ```
+
+2. Install with poetry:
+    ```shell
+    poetry install
+    ```
