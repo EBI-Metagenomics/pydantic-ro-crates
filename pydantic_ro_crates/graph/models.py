@@ -2,6 +2,7 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, List, Optional, Union
 
+from pydantic import BaseModel
 from pydantic2_schemaorg.CreativeWork import CreativeWork
 from pydantic2_schemaorg.Dataset import Dataset
 from pydantic2_schemaorg.MediaObject import MediaObject
@@ -18,6 +19,8 @@ __all__ = [
     "File",
     "LocalalisableFile",
     "RO_CRATE_METADATA_JSON",
+    "ROCrateMetadata",
+    "CrateSubgraphWithAdditionalContexts",
 ]
 
 from pydantic2_schemaorg.Thing import Thing
@@ -111,3 +114,8 @@ class File(MediaObject):
 
 class LocalalisableFile(File):
     source_on_host: Path = Field(exclude=True)
+
+
+class CrateSubgraphWithAdditionalContexts(BaseModel):
+    additional_contexts: List[Union[str, dict]]
+    items: List[Any]

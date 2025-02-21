@@ -15,10 +15,13 @@ arcp = "^0.2.1"
 pydantic = "^2.9.2"
 pydantic2-schemaorg = "^0.3.0"
 jinja2 = "^3.1.4"
+altair = {extras = ["all"], version = "^5.5.0"}
+pandas = "^2.2.3"
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^4.0.1"
 pytest = "^8.3.3"
+datamodel-code-generator = {extras = ["http"], version = "^0.28.1"}
 
 [build-system]
 requires = ["poetry-core"]

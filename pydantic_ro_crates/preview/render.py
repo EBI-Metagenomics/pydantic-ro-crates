@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 from typing import TYPE_CHECKING, Optional
 
@@ -8,6 +9,20 @@ if TYPE_CHECKING:
 
 template_dir = Path(__file__).parent / "templates"
 env = Environment(loader=FileSystemLoader(template_dir))
+
+
+def pretty_json(value):
+    if should_be_code_block(value):
+        return json.dumps(value, indent=2)
+    return value
+
+
+def should_be_code_block(value):
+    return type(value) in [list, dict]
+
+
+env.filters["pretty_json"] = pretty_json
+env.filters["should_be_code_block"] = should_be_code_block
 
 
 def render_preview_html(roc: "ROCrate", output: Optional[Path] = None) -> str:
