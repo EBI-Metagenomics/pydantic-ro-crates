@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pydantic-ro-crates"
-version = "0.2.1"
+version = "0.3.0"
 description = "Create Research Object Crates (RO-Crates) using Pydantic types"
 authors = ["Sandy Rogers <sandyr@ebi.ac.uk>", "Mahfouz Shehu <mahfouz@ebi.ac.uk>"]
 license = "Apache License 2.0"
