@@ -36,13 +36,11 @@ def test_map_crate_preview():
         leaflet_file = leaflet_dir / Path("map.html")
         render_leaflet_map([location], leaflet_file, title=dataset.name)
 
-        roc.add_localised_file(
-            LocalalisableFile(
-                id_="map.html",
-                source_on_host=leaflet_file,
-                name="Sample map",
-                description="Map of sample coordinates",
-            )
+        roc += LocalalisableFile(
+            id_="map.html",
+            source_on_host=leaflet_file,
+            name="Sample map",
+            description="Map of sample coordinates",
         )
 
         roc.zip(Path("map-test.zip"), force=True)

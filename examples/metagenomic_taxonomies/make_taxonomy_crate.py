@@ -16,16 +16,16 @@ dataset = Dataset(
 roc += dataset
 
 # Add the data file into the crate, so that it will be packaged alongside the metadata
-mapseq_data = LocalalisableFile(
+taxonomy_data = LocalalisableFile(
     source_on_host=Path(__file__).parent / "iss_taxonomies.tsv",
     id_="iss_taxonomies.tsv",
     name="SILVA taxonomic assignments",
     encodingFormat="text/tab-separated-values",
 )
-roc.add_localised_file(mapseq_data)
+roc += taxonomy_data
 
 viz_subgraph = tsv_histogram(
-    data_file=mapseq_data,
+    data_file=taxonomy_data,
     x_label="taxonomy",
     y_label="SSU_rRNA",  # OTU counts
     n_biggest=20,

@@ -1,6 +1,12 @@
 .idea
 build
 dist
+
+# test artifacts
 map-test.zip
+
+# example artifacts
 iss_taxonomies.zip
 iss_taxonomies
+marine_sample.zip
+marine_sample

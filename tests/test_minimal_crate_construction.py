@@ -62,12 +62,10 @@ def test_minimal_crate_construction():
     roc += dataset
     assert len(roc.graph) == 3
 
-    roc.add_localised_file(
-        LocalalisableFile(
-            source_on_host=Path("tests/fixtures/hello_world.txt"),
-            id_="hello_world.txt",
-            name="Message to the planet",
-        )
+    roc += LocalalisableFile(
+        source_on_host=Path("tests/fixtures/hello_world.txt"),
+        id_="hello_world.txt",
+        name="Message to the planet",
     )
     assert len(roc.graph) == 4
     assert roc.graph[3].name == "Message to the planet"
