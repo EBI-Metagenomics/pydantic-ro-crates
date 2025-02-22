@@ -1,0 +1,14 @@
+{
+  "@context": {
+    "VegaLiteVisualisation": "schema:CreativeWork",
+    "data": "https://vega.github.io/schema/vega-lite/v5.json#definitions/Data",
+    "mark": "https://vega.github.io/schema/vega-lite/v5.json#definitions/Mark",
+    "encoding": "https://vega.github.io/schema/vega-lite/v5.json#definitions/Encoding",
+    "transform": "https://vega.github.io/schema/vega-lite/v5.json#definitions/Transform",
+    "width": "https://vega.github.io/schema/vega-lite/v5.json#definitions/Width",
+    "height": "https://vega.github.io/schema/vega-lite/v5.json#definitions/Height",
+    "config": "https://vega.github.io/schema/vega-lite/v5.json#definitions/Config",
+    "encodingFormat": "schema:encodingFormat",
+    "about": "schema:about"
+  }
+}

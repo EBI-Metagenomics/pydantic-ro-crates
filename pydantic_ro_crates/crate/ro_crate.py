@@ -1,5 +1,4 @@
 import importlib
-import json
 import logging
 import tempfile
 from pathlib import Path
@@ -18,6 +17,7 @@ from ..graph.models import (
     RO_CRATE_METADATA_JSON,
     ROOT_PATH,
     TYPE,
+    CrateSubgraphWithAdditionalContexts,
     LocalalisableFile,
     ROCrateMetadata,
     ROCrateModel,
@@ -57,7 +57,16 @@ class ROCrate:
         return self.crate.root
 
     def __iadd__(self, other: Any):
-        self.crate.graph_.append(other)
+        if isinstance(other, LocalalisableFile):
+            self.add_localised_file(other)
+        elif isinstance(other, CrateSubgraphWithAdditionalContexts):
+            if type(self.crate.context_) is str:
+                self.crate.context_ = [self.crate.context_]
+            self.crate.context_ += other.additional_contexts
+            for item in other.items:
+                self.__iadd__(item)
+        else:
+            self.crate.graph_.append(other)
         return self
 
     @property
@@ -82,7 +91,7 @@ class ROCrate:
             logging.info(f"Using {tmpdir} as crate folder")
             with open(tmpdir / Path(RO_CRATE_METADATA_JSON), "w") as crate_json_file:
                 logging.debug(f"Dumping crate json to {crate_json_file}")
-                json.dump(self.json, crate_json_file)
+                crate_json_file.write(self.json)
 
             if generate_preview:
                 render_preview_html(self, tmpdir / Path("ro-crate-preview.html"))

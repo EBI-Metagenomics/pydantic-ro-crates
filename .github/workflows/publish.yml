@@ -6,6 +6,9 @@ on:   # yamllint disable-line rule:truthy
     workflows: [test]
     types:
       - completed
+    branches:
+      - main
+
   workflow_dispatch:
 
 jobs:

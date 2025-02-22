@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pydantic-ro-crates"
-version = "0.2.1"
+version = "0.3.0"
 description = "Create Research Object Crates (RO-Crates) using Pydantic types"
 authors = ["Sandy Rogers <sandyr@ebi.ac.uk>", "Mahfouz Shehu <mahfouz@ebi.ac.uk>"]
 license = "Apache License 2.0"
@@ -15,10 +15,13 @@ arcp = "^0.2.1"
 pydantic = "^2.9.2"
 pydantic2-schemaorg = "^0.3.0"
 jinja2 = "^3.1.4"
+altair = {extras = ["all"], version = "^5.5.0"}
+pandas = "^2.2.3"
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^4.0.1"
 pytest = "^8.3.3"
+datamodel-code-generator = {extras = ["http"], version = "^0.28.1"}
 
 [build-system]
 requires = ["poetry-core"]
